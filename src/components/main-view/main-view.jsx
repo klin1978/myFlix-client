@@ -24,7 +24,7 @@ export const MainView = () => {
     }
   ]);
 
-  const [selectedMovie, setSelectedBook] = useState(null);
+  const [selectedMovie, setSelectedMovie] = useState(null);
 
   if (selectedMovie) {
     return <MovieView movie={selectedMovie} />;
