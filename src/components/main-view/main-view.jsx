@@ -1,28 +1,36 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { MovieCard } from '../movie-card/movie-card';
 import { MovieView } from '../movie-view/movie-view';
 
 export const MainView = () => {
-  const [movies, setMovies] = useState([
-    { 
-        id: 1, 
-        title: 'The Avengers', 
-        image: 'https://www.pluggedin.com/wp-content/uploads/2019/12/the-avengers-review-image-1200x688.jpg',
-        director: 'Joss Whedon'
-    },
-    { 
-        id: 2, 
-        title: 'Pitch Perfect',
-        image: 'https://m.media-amazon.com/images/I/91bAKJ3lMVL._AC_UF894,1000_QL80_.jpg',
-        director: 'Jason Moore'
-    },
-    { 
-        id: 3, 
-        title: 'The Heat',
-        image: 'https://m.media-amazon.com/images/I/91IxCrm1VWL._AC_UF894,1000_QL80_.jpg',
-        direcotr: 'Paul Feig'
-    }
-  ]);
+  const [movies, setMovies] = useState([]);
+
+  useEffect(() => {
+    fetch('https://my-films-9be1d0babd61.herokuapp.com/')
+      .then((response) => response.json())
+      .then((data) => {
+        const moviesFromApi = data.map((movie) => {
+          return {
+            _id: movie.id,
+            Title: movie.Title,
+            Genre: {
+              Name: movie.Genre.Name,
+              Description: movie.Genre.Description
+            },
+            Description: movie.Description,
+            Cast: movie.Cast,
+            Director: {
+              Name: movie.Director.Name,
+              Born: movie.Director.Born,
+              Died: movie.Director.Died,
+              Biography: movie.Director.Biography
+            }
+          };
+        });
+
+        setMovies(moviesFromApi);
+      });
+  }, []);
 
   const [selectedMovie, setSelectedMovie] = useState(null);
 
