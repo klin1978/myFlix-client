@@ -5,8 +5,10 @@ import { MovieView } from '../movie-view/movie-view';
 export const MainView = () => {
   const [movies, setMovies] = useState([]);
 
+  const [selectedMovie, setSelectedMovie] = useState(null);
+
   useEffect(() => {
-    fetch('https://my-films-9be1d0babd61.herokuapp.com/')
+    fetch('https://my-films-9be1d0babd61.herokuapp.com/movies')
       .then((response) => response.json())
       .then((data) => {
         const moviesFromApi = data.map((movie) => {
@@ -18,7 +20,6 @@ export const MainView = () => {
               Description: movie.Genre.Description
             },
             Description: movie.Description,
-            Cast: movie.Cast,
             Director: {
               Name: movie.Director.Name,
               Born: movie.Director.Born,
@@ -32,10 +33,10 @@ export const MainView = () => {
       });
   }, []);
 
-  const [selectedMovie, setSelectedMovie] = useState(null);
-
   if (selectedMovie) {
-    return <MovieView movie={selectedMovie} />;
+    return (
+      <MovieView movie={selectedMovie} onBackClick={() => setSelectedMovie(null)} />
+    );
   }
 
   if (movies.length === 0) {
