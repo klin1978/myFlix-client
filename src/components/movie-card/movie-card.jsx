@@ -16,11 +16,10 @@ MovieCard.propTypes = {
         Description: PropTypes.string.isRequired
       }),
       Description: PropTypes.string.isRequired,
-      Cast: PropTypes.string.isRequired,
       Director: PropTypes.shape({
         Name: PropTypes.string.isRequired,
         Born: PropTypes.string.isRequired,
-        Died: PropTypes.string.isRequired,
+        Died: PropTypes.string,
         Biography: PropTypes.string.isRequired
       })
     }).isRequired,
