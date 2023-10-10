@@ -2,12 +2,13 @@ import { useState } from 'react';
 
 export const LoginView = ({ onLoggedIn }) => {
     const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
     const handleSubmit = (event) => {
         event.preventDefault();
 
         const data = {
-            access: username,
-            secret: password
+            username: username,
+            password: password
         };
 
         fetch('https://my-films-9be1d0babd61.herokuapp.com/login', {
@@ -37,13 +38,13 @@ export const LoginView = ({ onLoggedIn }) => {
       <form onSubmit={handleSubmit}>
         <label>
           Username:
-          <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
+          <input type='text' value={username} onChange={(e) => setUsername(e.target.value)} />
         </label>
         <label>
           Password:
-          <input type="password" />
+          <input type='password' value={password} onChange={(e) => setPassword(e.target.value)} />
         </label>
-        <button type="submit">Submit</button>
+        <button type='submit'>Submit</button>
       </form>
     );
   };
