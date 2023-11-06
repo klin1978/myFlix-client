@@ -13,7 +13,7 @@ export const ProfileView = ({ user, token, movies, setUser }) => {
     
     let favoriteMovies = movies.filter(movie => user.FavoriteMovies.includes(movie._id))
     
-    const handleUpdate = (event) => {
+    const handleSubmit = (event) => {
         event.preventDefault();
 
         let data = {
@@ -23,29 +23,29 @@ export const ProfileView = ({ user, token, movies, setUser }) => {
             Birthday: birthday
         };
 
-        fetch('https://my-films-9be1d0babd61.herokuapp.com/users/$(users.Username', {
+        fetch(`https://my-films-9be1d0babd61.herokuapp.com/users/${user.Username}`, {
             method: 'PUT',
+            body: JSON.stringify(data),
             headers: {
-                'Conent-Type': 'application/json',
+                'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify(data)
+            }
         }).then(async (response) => {
             if (response.ok) {
                 alert('Update successful!');
             } else {
                 alert('Update failed')
             }
-        }).then((updatedUser) => {
-            if (updatedUser) {
-                localStorage.setItem('user', JSON.stringify(updatedUser))
-                setUser(updatedUser)
+        }).then((data) => {
+            if (data) {
+                localStorage.setItem('user', JSON.stringify(data))
+                setUser(data)
             }
         })
     }
 
     const handleDelete = () => {
-        fetch('https://my-films-9be1d0babd61.herokuapp.com/users/${users.Username}', {
+        fetch(`https://my-films-9be1d0babd61.herokuapp.com/users/${user.Username}`, {
             method: 'DELETE',
             headers: {Authorization: `Bearer ${token}`}
         }).then((response) => {
@@ -66,14 +66,14 @@ export const ProfileView = ({ user, token, movies, setUser }) => {
                     <Card>
                         <Card.Body>
                             <Card.Title>My Info</Card.Title>
-                            <Form className='profile-form' onSubmit={(e) => handleSubmit(e)}>
+                            <Form className='profile-form' onSubmit={handleSubmit}>
                                 <Form.Group>
                                     <Form.Label>Username:</Form.Label>
                                     <Form.Control
                                         type='text'
                                         name='Username'
                                         defaultValue={user.Username}
-                                        onChange={e => handleUpdate(e)}
+                                        onChange={(e) => {setUsername(e.target.value);}}
                                         required
                                         placeholder='Enter a new username' />
                                 </Form.Group>
@@ -83,7 +83,7 @@ export const ProfileView = ({ user, token, movies, setUser }) => {
                                         type='email'
                                         name='Email'
                                         defaultValue={user.Email}
-                                        onChange={e => handleUpdate(e)}
+                                        onChange={(e) => {setEmail(e.target.value);}}
                                         required
                                         placeholder='Enter your email address' />
                                 </Form.Group>
@@ -93,7 +93,7 @@ export const ProfileView = ({ user, token, movies, setUser }) => {
                                         type='password'
                                         name='Password'
                                         defaultValue={user.Password}
-                                        onChange={e => handleUpdate(e)}
+                                        onChange={(e) => {setPassword(e.target.value);}}
                                         required
                                         minLength='8'
                                         placeholder='Enter a new password' />
