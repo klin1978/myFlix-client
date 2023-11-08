@@ -10,7 +10,7 @@ import Col from 'react-bootstrap/Col';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 export const MainView = () => {
-  const storedUser = JSON.parse(localStorage.getItem('user'));
+  const storedUser = JSON.parse(localStorage.getItem('users'));
   const storedToken = localStorage.getItem('token');
   const [movies, setMovies] = useState([]);
   const [user, setUser] = useState(null);
@@ -29,7 +29,7 @@ export const MainView = () => {
       .then((data) => {
         const moviesFromApi = data.map((movie) => {
           return {
-            _id: movie.id,
+            id: movie._id,
             Title: movie.Title,
             Genre: {
               Name: movie.Genre.Name,
@@ -99,7 +99,7 @@ export const MainView = () => {
                   <Col>The list is empty!</Col> 
                 ) : (
                   <Col md={8}> 
-                    <MovieView movies={movies} />
+                    <MovieView movies={movies}/>
                   </Col>
                 )}
               </>
@@ -116,8 +116,13 @@ export const MainView = () => {
                 ) : (
                   <>
                     {movies.map((movie) => (
-                      <Col className='mb-4' key={movie.id} md={3}>
-                        <MovieCard movie={movie} />
+                      <Col className='mb-4' key={movie._id} md={3}>
+                        <MovieCard 
+                          movie={movie}
+                          user={user}
+                          token={token}
+                          setUser={setUser}
+                        />
                       </Col>
                     ))}
                   </>

@@ -11,10 +11,54 @@ export const ProfileView = ({ user, token, movies, setUser }) => {
     const [password, setPassword] = useState(user.Password)
     const [birthday, setBirthday] = useState(user.Birthday)
     
-    let favoriteMovies = movies.filter(movie => user.FavoriteMovies.includes(movie._id))
+    let favoriteMovies = movies.filter(movie => user.FavoriteMovies.includes(movie._id));
     
-    const handleUpdate = (event) => {
+    const addFavorite = (movieId) => {
+        fetch(`https://my-films-9be1d0babd61.herokuapp.com/users/${user.Username}/movies/${movieId}`, {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${token}` }
+          }
+          ).then((response) => {
+            if (response.ok) {
+              return response.json();
+            } else {
+              alert('Failed to add movie')
+            }
+          }).then((data) => {
+            if (data) {
+              localStorage.setItem('user', JSON.stringify(data));
+              setUser(data);
+              setFavorite(true);
+              alert('Movie added!');
+            }
+          }).catch((error) => {
+            alert(error);
+          });
+    };
+
+    const removeFavorite = (movieId) => {
+        fetch(`https://my-films-9be1d0babd61.herokuapp.com/users/${user.Username}/movies/${movieId}`, {
+            method: 'DELETE', 
+            headers: { Authorization: `Bearer ${token}` }
+          }).then((response) => {
+            if (response.ok) {
+              return response.json();
+            } else {
+              alert('Failed to remove favorite movie');
+            }
+          }).then((data) => {
+              localStorage.setItem('user', JSON.stringify(data));
+              setUser(data);
+              setFavorite(false);
+              alert('Favorite movie removed');
+          }).catch((error) => {
+            alert(error);
+          });
+    };
+
+    const handleSubmit = (event) => {
         event.preventDefault();
+        handleUpdate();
 
         let data = {
             Username: username,
@@ -23,29 +67,29 @@ export const ProfileView = ({ user, token, movies, setUser }) => {
             Birthday: birthday
         };
 
-        fetch('https://my-films-9be1d0babd61.herokuapp.com/users/$(users.Username', {
+        fetch(`https://my-films-9be1d0babd61.herokuapp.com/users/${user.Username}`, {
             method: 'PUT',
+            body: JSON.stringify(data),
             headers: {
-                'Conent-Type': 'application/json',
+                'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify(data)
+            }
         }).then(async (response) => {
             if (response.ok) {
                 alert('Update successful!');
             } else {
                 alert('Update failed')
             }
-        }).then((updatedUser) => {
-            if (updatedUser) {
-                localStorage.setItem('user', JSON.stringify(updatedUser))
-                setUser(updatedUser)
+        }).then((data) => {
+            if (data) {
+                localStorage.setItem('user', JSON.stringify(data))
+                setUser(data)
             }
         })
     }
 
     const handleDelete = () => {
-        fetch('https://my-films-9be1d0babd61.herokuapp.com/users/${users.Username}', {
+        fetch(`https://my-films-9be1d0babd61.herokuapp.com/users/${user.Username}`, {
             method: 'DELETE',
             headers: {Authorization: `Bearer ${token}`}
         }).then((response) => {
@@ -66,14 +110,14 @@ export const ProfileView = ({ user, token, movies, setUser }) => {
                     <Card>
                         <Card.Body>
                             <Card.Title>My Info</Card.Title>
-                            <Form className='profile-form' onSubmit={(e) => handleSubmit(e)}>
+                            <Form className='profile-form' onSubmit={handleSubmit}>
                                 <Form.Group>
                                     <Form.Label>Username:</Form.Label>
                                     <Form.Control
                                         type='text'
                                         name='Username'
                                         defaultValue={user.Username}
-                                        onChange={e => handleUpdate(e)}
+                                        onChange={(e) => {setUsername(e.target.value);}}
                                         required
                                         placeholder='Enter a new username' />
                                 </Form.Group>
@@ -83,7 +127,7 @@ export const ProfileView = ({ user, token, movies, setUser }) => {
                                         type='email'
                                         name='Email'
                                         defaultValue={user.Email}
-                                        onChange={e => handleUpdate(e)}
+                                        onChange={(e) => {setEmail(e.target.value);}}
                                         required
                                         placeholder='Enter your email address' />
                                 </Form.Group>
@@ -93,7 +137,7 @@ export const ProfileView = ({ user, token, movies, setUser }) => {
                                         type='password'
                                         name='Password'
                                         defaultValue={user.Password}
-                                        onChange={e => handleUpdate(e)}
+                                        onChange={(e) => {setPassword(e.target.value);}}
                                         required
                                         minLength='8'
                                         placeholder='Enter a new password' />
@@ -109,16 +153,18 @@ export const ProfileView = ({ user, token, movies, setUser }) => {
                     <Card>
                         <Card.Body>
                             <Card.Title>Favorite Movies</Card.Title>
-                            {favoriteMovies.map((movies) => {
+                            {favoriteMovies.map((movie) => {
                                 return (
-                                    <Col xs={12} md={6} lg={3} key={movies._id} className='fav-movies'>
-                                        <MovieCard to={`/movies/${movies._id}`}>
+                                    <Col xs={12} md={6} lg={3} key={movie._id} className='fav-movies'>
+                                        <MovieCard 
                                             movie={movie}
                                             user={user}
-                                            token-{token}
+                                            token={token}
                                             setUser={setUser}
-                                        </MovieCard>
-                                        <Button variant='outline-dark' size='sm' onClick={() => removeFav(movies._id)}>Remove</Button>
+                                            addFavorite={addFavorite}
+                                            removeFavorite={removeFavorite}
+                                        />
+                                        <Button variant='outline-dark' size='sm' onClick={() => removeFavorite(movie._id)}>Remove</Button>
                                     </Col>
                                 )
                             })
