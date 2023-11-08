@@ -11,10 +11,54 @@ export const ProfileView = ({ user, token, movies, setUser }) => {
     const [password, setPassword] = useState(user.Password)
     const [birthday, setBirthday] = useState(user.Birthday)
     
-    let favoriteMovies = movies.filter(movie => user.FavoriteMovies.includes(movie._id))
+    let favoriteMovies = movies.filter(movie => user.FavoriteMovies.includes(movie._id));
     
+    const addFavorite = (movieId) => {
+        fetch(`https://my-films-9be1d0babd61.herokuapp.com/users/${user.Username}/movies/${movieId}`, {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${token}` }
+          }
+          ).then((response) => {
+            if (response.ok) {
+              return response.json();
+            } else {
+              alert('Failed to add movie')
+            }
+          }).then((data) => {
+            if (data) {
+              localStorage.setItem('user', JSON.stringify(data));
+              setUser(data);
+              setFavorite(true);
+              alert('Movie added!');
+            }
+          }).catch((error) => {
+            alert(error);
+          });
+    };
+
+    const removeFavorite = (movieId) => {
+        fetch(`https://my-films-9be1d0babd61.herokuapp.com/users/${user.Username}/movies/${movieId}`, {
+            method: 'DELETE', 
+            headers: { Authorization: `Bearer ${token}` }
+          }).then((response) => {
+            if (response.ok) {
+              return response.json();
+            } else {
+              alert('Failed to remove favorite movie');
+            }
+          }).then((data) => {
+              localStorage.setItem('user', JSON.stringify(data));
+              setUser(data);
+              setFavorite(false);
+              alert('Favorite movie removed');
+          }).catch((error) => {
+            alert(error);
+          });
+    };
+
     const handleSubmit = (event) => {
         event.preventDefault();
+        handleUpdate();
 
         let data = {
             Username: username,
@@ -109,16 +153,18 @@ export const ProfileView = ({ user, token, movies, setUser }) => {
                     <Card>
                         <Card.Body>
                             <Card.Title>Favorite Movies</Card.Title>
-                            {favoriteMovies.map((movies) => {
+                            {favoriteMovies.map((movie) => {
                                 return (
-                                    <Col xs={12} md={6} lg={3} key={movies._id} className='fav-movies'>
-                                        <MovieCard to={`/movies/${movies._id}`}>
+                                    <Col xs={12} md={6} lg={3} key={movie._id} className='fav-movies'>
+                                        <MovieCard 
                                             movie={movie}
                                             user={user}
-                                            token-{token}
+                                            token={token}
                                             setUser={setUser}
-                                        </MovieCard>
-                                        <Button variant='outline-dark' size='sm' onClick={() => removeFav(movies._id)}>Remove</Button>
+                                            addFavorite={addFavorite}
+                                            removeFavorite={removeFavorite}
+                                        />
+                                        <Button variant='outline-dark' size='sm' onClick={() => removeFavorite(movie._id)}>Remove</Button>
                                     </Col>
                                 )
                             })
