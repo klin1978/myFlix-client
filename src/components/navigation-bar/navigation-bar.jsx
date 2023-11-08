@@ -4,14 +4,10 @@ import { Link } from 'react-router-dom';
 
 export const NavigationBar = ({ user, onLoggedOut}) => {
   return (
-    <Navbar collapseOnSelect expand='lg' bg='light'>
+    <Navbar bg='light' data-bs-theme='light'>
       <Container>
-        <Navbar.Brand as={Link} to='/'>
-          Movies App
-        </Navbar.Brand>
-        <Navbar.Toggle aria-controls='responsive-navbar-nav' />
-        <Navbar.Collapse id='responsive-navbar-nav'>
-          <Nav className='me-auto'>
+        <Navbar.Brand as={Link} to='/'><h1>myFlix App</h1></Navbar.Brand>
+        <Nav className='justify-content-end'>
             {!user && (
               <>
                 <Nav.Link as={Link} to='/login'>Login</Nav.Link>
@@ -27,8 +23,7 @@ export const NavigationBar = ({ user, onLoggedOut}) => {
                 </>
               )}
           </Nav>
-          </Nav>
-        </Navbar.Collapse>
+        </Nav>
       </Container>
     </Navbar>
   );
