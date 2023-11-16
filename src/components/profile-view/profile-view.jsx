@@ -11,49 +11,37 @@ export const ProfileView = ({ user, token, movies, setUser }) => {
     const [password, setPassword] = useState(user.Password)
     const [birthday, setBirthday] = useState(user.Birthday)
     
-    let favoriteMovies = movies.filter(movie => user.FavoriteMovies.includes(movie._id));
-    
+    let favoriteMovies = movies.filter(movie => user.FavoriteMovies.includes(movie.id));
+/*  console.log(favoriteMovies);
+    console.log(user);
+    console.log(movies); */
+
     const addFavorite = (movieId) => {
-        fetch(`https://my-films-9be1d0babd61.herokuapp.com/users/${user.Username}/movies/${movieId}`, {
+        fetch(`https://my-films-9be1d0babd61.herokuapp.com/users/${user.Username}/movies/${movie.id}`, {
             method: 'POST',
-            headers: { Authorization: `Bearer ${token}` }
-          }
-          ).then((response) => {
+            headers: { Authorization: `Bearer ${token}` },
+            body: JSON.stringify({ movieId }),
+          }).then((response) => { response.json();
+          }).then(data => {
             if (response.ok) {
-              return response.json();
-            } else {
-              alert('Failed to add movie')
-            }
-          }).then((data) => {
-            if (data) {
-              localStorage.setItem('user', JSON.stringify(data));
-              setUser(data);
-              setFavorite(true);
-              alert('Movie added!');
+                return response.JSON(data);
             }
           }).catch((error) => {
             alert(error);
-          });
+        });
     };
 
     const removeFavorite = (movieId) => {
-        fetch(`https://my-films-9be1d0babd61.herokuapp.com/users/${user.Username}/movies/${movieId}`, {
-            method: 'DELETE', 
-            headers: { Authorization: `Bearer ${token}` }
-          }).then((response) => {
-            if (response.ok) {
-              return response.json();
-            } else {
-              alert('Failed to remove favorite movie');
-            }
-          }).then((data) => {
-              localStorage.setItem('user', JSON.stringify(data));
-              setUser(data);
-              setFavorite(false);
-              alert('Favorite movie removed');
-          }).catch((error) => {
-            alert(error);
-          });
+        fetch(`https://my-films-9be1d0babd61.herokuapp.com/users/${user.Username}/movies/${movieId}`, { movieId }, {
+        method: 'DELETE', 
+        headers: { Authorization: `Bearer ${token}` }
+      }).then((response) => {
+        if (response.ok) {
+          return response.json();
+        } 
+      }).catch((error) => {
+        alert(error);
+      });
     };
 
     const handleSubmit = (event) => {
@@ -164,7 +152,6 @@ export const ProfileView = ({ user, token, movies, setUser }) => {
                                             addFavorite={addFavorite}
                                             removeFavorite={removeFavorite}
                                         />
-                                        <Button variant='outline-dark' size='sm' onClick={() => removeFavorite(movie._id)}>Remove</Button>
                                     </Col>
                                 )
                             })

@@ -24,7 +24,7 @@ export const MovieView = ({ movies }) => {
                             <Card.Text>{movie.Director.Biography}</Card.Text>
                         </Card.Body>
                         <Link to={`/`}>
-                            <Button variant='outline-dark' className="back-button">Back</Button>
+                            <Button variant='outline-dark' size='sm' className="back-button mx-2 my-2">Back</Button>
                         </Link>
                     </Card>
                 </Col>
