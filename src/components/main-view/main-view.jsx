@@ -15,6 +15,7 @@ export const MainView = () => {
   const [movies, setMovies] = useState([]);
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
+  const [searchMovies, setSearchMovies] = useState(movies);
 
   useEffect(() => {
     if (!token) {
@@ -49,12 +50,24 @@ export const MainView = () => {
       });
   }, [token]);
 
+  useEffect(() => {
+    setSearchMovies(movies);
+  }, [movies]);
+
   return ( 
     <BrowserRouter>
-      <NavigationBar user={user} onLoggedOut={() => { 
-        setUser(null);
-        localStorage.clear(); 
+      <NavigationBar 
+        user={user} 
+        movies={movies}
+        setMovies={setMovies}
+        onLoggedOut={() => { 
+          setUser(null);
+          setToken(null);
+          localStorage.clear(); 
         }} 
+        onSearch={(query) => {
+          setSearchMovies(movies.filter(movie => movie.title.toLowerCase().includes(query.toLowerCase())));
+        }}
       />
       <Row className='justify-content-md-center'>
         <Routes>
@@ -122,6 +135,9 @@ export const MainView = () => {
                           user={user}
                           token={token}
                           setUser={setUser}
+                          onMovieClick={(newSelectedMovie) => {
+                            setSearchMovies(newSelectedMovie);
+                          }}
                         />
                       </Col>
                     ))}
