@@ -66,7 +66,7 @@ export const MainView = () => {
           localStorage.clear(); 
         }} 
         onSearch={(query) => {
-          setSearchMovies(movies.filter(movie => movie.title.toLowerCase().includes(query.toLowerCase())));
+          setSearchMovies(movies.filter(movie => movie.Title.toLowerCase().includes(query.toLowerCase())));
         }}
       />
       <Row className='justify-content-md-center'>
@@ -128,16 +128,16 @@ export const MainView = () => {
                   <Col>The list is empty!</Col>
                 ) : (
                   <>
-                    {movies.map((movie) => (
+                    {searchMovies.map((movie) => (
                       <Col className='mb-4' key={movie._id} md={3}>
                         <MovieCard 
                           movie={movie}
                           user={user}
                           token={token}
                           setUser={setUser}
-                          onMovieClick={(newSelectedMovie) => {
-                            setSearchMovies(newSelectedMovie);
-                          }}
+                          // onMovieClick={(newSelectedMovie) => {
+                          //   setSearchMovies(newSelectedMovie);
+                          // }}
                         />
                       </Col>
                     ))}

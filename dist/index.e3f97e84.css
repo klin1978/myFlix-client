@@ -13219,6 +13219,20 @@ textarea.form-control-lg {
   }
 }
 
+.search-bar {
+  border: none;
+  border-radius: 3px;
+  width: 65px;
+  padding: 5px;
+  transition: all .4s ease-in-out;
+}
+
+.search-bar:focus {
+  border-bottom: 1px solid #d3d3d3;
+  outline: none;
+  width: 200px;
+}
+
 .fav-movies {
   margin-bottom: 15px;
 }
